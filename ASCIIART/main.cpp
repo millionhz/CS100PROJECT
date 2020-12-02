@@ -76,7 +76,6 @@ void resizeImage(Mat& image, int size, double y_shrink)
 {
     double aspect_ratio = 0;
     aspect_ratio = image.size[1] / (double)image.size[0];
-    //cout << "Aspect Ratio" << aspect_ratio << endl;
 
     if (image.size[1] > size)
     {
@@ -187,7 +186,7 @@ int main(int argc, char* argv[])
 
     saveAscii(ascii, text_file);
 
-    anyKeyToExit();
+    //anyKeyToExit();
 
     return 0;
 }
