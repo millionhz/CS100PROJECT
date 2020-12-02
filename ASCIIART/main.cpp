@@ -1,10 +1,12 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 #include <iostream>
 #include <cmath>
 using namespace cv;
 using namespace std;
+
 
 int main(int argc, char** argv)
 {
@@ -14,7 +16,6 @@ int main(int argc, char** argv)
     //    return -1;
     //}
 
-    //Mat image;
     const int CHARS_SIZE = 10; // `~!sTomN@
     char chars[CHARS_SIZE] = { ' ','`','~', '!', 's', 'T', 'o', 'm', 'N' , '@' }; 
     //char chars[CHARS_SIZE] = { '@', 'N', 'm', 'o', 'T', 's', '!', '~', '`', ' ' };
@@ -23,6 +24,8 @@ int main(int argc, char** argv)
     double aspect_ratio = 0;
     int size = 110; // width
     double y_shrink = 1.956;
+    int low = 60;
+    int high = 245;
     string image_name;
 
     cout << "Input Image Path: "; getline(cin, image_name); 
@@ -33,6 +36,7 @@ int main(int argc, char** argv)
 
     }
     cout << image_name << endl;
+
     Mat image = imread(image_name, IMREAD_GRAYSCALE); // Read the file
 
 
@@ -53,9 +57,24 @@ int main(int argc, char** argv)
     }
 
 
+    // Normalizing
+
+    for (int y = 0; y < image.size[0]; y++)
+    {
+        for (int x = 0; x < image.size[1]; x++)
+        {
+            if ((int)image.at<uchar>(Point(x, y)) < low)
+                image.at<uchar>(Point(x, y)) = low;
+            else if ((int)image.at<uchar>(Point(x, y)) > high)
+                image.at<uchar>(Point(x, y)) = high;
+        }
+    }
+
+    normalize(image, image, 0, 255, NORM_MINMAX);
+
     //namedWindow("Display window", WINDOW_AUTOSIZE); // Create a window for display.
-    //imshow("Display window", image); // Show our image inside it.
-    //waitKey(0); // Wait for a keystroke in the window
+    imshow("Display window", image); // Show our image inside it.
+    waitKey(0); // Wait for a keystroke in the window
 
     //cout << image.size[0] << endl;
     int lum;
