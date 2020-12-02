@@ -1,10 +1,12 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
+//#include <opencv2/highgui.hpp>
 #include <iostream>
 #include <cmath>
 #include <conio.h>
+#include <fstream>
+
 
 using namespace cv;
 using namespace std;
@@ -12,7 +14,35 @@ using namespace std;
 void anyKeyToExit()
 {
     cout << "Press Any Key To Exit...";
-    _getch();
+    char _ = _getch();
+}
+
+void printUserInput(int argc, char* argv[])
+{
+    cout << "Your Input: ";
+    for (int i = 1; i < argc; i++)
+    {
+        cout << argv[i] << " ";
+    }
+    cout << "\b " << endl;
+}
+
+void parseArgs(int argc, char* argv[])
+{
+    //if (argc == 7 && (int)argv[2] > 0 && (int)argv[3] >=0 && (int)argv[4] <= 255 && (int)argv[5] >= 0 && (int)argv[5] <= 1)
+    //cout << atoi(argv[2]) << endl;
+    if (argc == 7 && atoi(argv[2]) > 0 && atoi(argv[3]) >= 0 && atoi(argv[4]) <= 255 && atoi(argv[5]) >= 0 && atoi(argv[5]) <= 1)
+
+    {
+        cout << "Parse Successful..." << endl;
+    }
+    else
+    {
+        cout << "Parse Unsuccessful..." << endl;
+        cout << "Usage: [image file path] [size] [low] [high] [black_bg] [text file path]" << endl;
+        printUserInput(argc, argv);
+        exit(0);
+    }
 }
 
 Mat readImage(string image_file)
@@ -55,7 +85,7 @@ void resizeImage(Mat& image, int size, double y_shrink)
     }
 }
 
-void normalizeImage(Mat &image, const int &low, const int &high)
+void normalizeImage(Mat& image, const int& low, const int& high)
 {
     for (int y = 0; y < image.size[0]; y++)
     {
@@ -71,7 +101,7 @@ void normalizeImage(Mat &image, const int &low, const int &high)
     normalize(image, image, 0, 255, NORM_MINMAX);
 }
 
-string convertToASCII(const Mat& image, const char chars[],const int &CHARS_SIZE)
+string convertToASCII(const Mat& image, const char chars[], const int& CHARS_SIZE)
 {
     int lum = 0;
     string ascii = "";
@@ -89,26 +119,61 @@ string convertToASCII(const Mat& image, const char chars[],const int &CHARS_SIZE
     return ascii;
 }
 
-void _showImage(const Mat& image)
+void saveAscii(const string& ascii, const string& text_file)
 {
-    //namedWindow("Display window", WINDOW_AUTOSIZE); // Create a window for display.
-    imshow("Display window", image); // Show our image inside it.
-    waitKey(0); // Wait for a keystroke in the window
+    ofstream out_file;
+    out_file.open(text_file);
+    out_file << ascii;
 }
 
-int main()
+void invertChars(char chars[], const int& CHAR_SIZE)
 {
+
+    for (int low = 0, high = CHAR_SIZE - 1; low < high; low++, high--)
+    {
+        swap(chars[low], chars[high]);
+    }
+}
+
+//void _showImage(const Mat& image)
+//{
+//    //namedWindow("Display window", WINDOW_AUTOSIZE); // Create a window for display.
+//    imshow("Display window", image); // Show our image inside it.
+//    waitKey(0); // Wait for a keystroke in the window
+//}
+
+int main(int argc, char* argv[])
+{
+
+    parseArgs(argc, argv);
+
     Mat image;
     const int CHARS_SIZE = 10; // `~!sTomN@
     char chars[CHARS_SIZE] = { ' ','`','~', '!', 's', 'T', 'o', 'm', 'N' , '@' };
-    string ascii = "";
-    int size = 110; // width
     double y_shrink = 1.956;
-    int low = 60;
-    int high = 245;
-    string image_file;
 
-    image_file = getImageFile();
+    //int size = 110; // width
+    //int low = 60;
+    //int high = 245;
+    //bool black_bg = false;
+    //string image_file;
+    //string text_file = "ASCII.txt";
+
+    string image_file = (string)argv[1];
+    int size = atoi(argv[2]);
+    int low = atoi(argv[3]);
+    int high = atoi(argv[4]);
+    bool black_bg = (bool)atoi(argv[5]);
+    string text_file = (string)argv[6];
+
+    string ascii = "";
+
+    if (!black_bg)
+    {
+        invertChars(chars, CHARS_SIZE);
+    }
+
+    //image_file = getImageFile();
 
     image = readImage(image_file);
 
@@ -118,7 +183,9 @@ int main()
 
     ascii = convertToASCII(image, chars, CHARS_SIZE);
 
-    cout << ascii << endl; // print ascii on console
+    cout << ascii; // print ascii on console
+
+    saveAscii(ascii, text_file);
 
     anyKeyToExit();
 
