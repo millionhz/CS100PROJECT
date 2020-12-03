@@ -29,8 +29,6 @@ void printUserInput(int argc, char* argv[])
 
 void parseArgs(int argc, char* argv[])
 {
-    //if (argc == 7 && (int)argv[2] > 0 && (int)argv[3] >=0 && (int)argv[4] <= 255 && (int)argv[5] >= 0 && (int)argv[5] <= 1)
-    //cout << atoi(argv[2]) << endl;
     if (argc == 7 && atoi(argv[2]) > 0 && atoi(argv[3]) >= 0 && atoi(argv[4]) <= 255 && atoi(argv[5]) >= 0 && atoi(argv[5]) <= 1)
 
     {
@@ -76,12 +74,10 @@ void resizeImage(Mat& image, int size, double y_shrink)
 {
     double aspect_ratio = 0;
     aspect_ratio = image.size[1] / (double)image.size[0];
+    //image.size[1] = x-axis dim
+    int height = (int)round((size / aspect_ratio) / y_shrink);
+    resize(image, image, Size(size, height), INTER_LANCZOS4);
 
-    if (image.size[1] > size)
-    {
-        int height = (int)round((size / aspect_ratio) / y_shrink);
-        resize(image, image, Size(size, height), INTER_LANCZOS4);
-    }
 }
 
 void normalizeImage(Mat& image, const int& low, const int& high)
@@ -100,17 +96,17 @@ void normalizeImage(Mat& image, const int& low, const int& high)
     normalize(image, image, 0, 255, NORM_MINMAX);
 }
 
+
 string convertToASCII(const Mat& image, const char chars[], const int& CHARS_SIZE)
 {
-    int lum = 0;
+    int lum = 0; // luminance
     string ascii = "";
     for (int y = 0; y < image.size[0]; y++)
     {
         for (int x = 0; x < image.size[1]; x++)
         {
-            lum = image.at<uchar>(Point(x, y));
-
-            ascii += chars[(int)round(lum / 255.0 * ((double)CHARS_SIZE - 1))];
+            lum = image.at<uchar>(Point(x, y)); // pixel brightness value
+            ascii += chars[(int)round(lum / 255.0 * ((double)CHARS_SIZE - 1))]; // chars[0] (int)round(lum / 255.0 * ((double)CHARS_SIZE - 1))
         }
         ascii += '\n';
     }
@@ -127,7 +123,6 @@ void saveAscii(const string& ascii, const string& text_file)
 
 void invertChars(char chars[], const int& CHAR_SIZE)
 {
-
     for (int low = 0, high = CHAR_SIZE - 1; low < high; low++, high--)
     {
         swap(chars[low], chars[high]);
