@@ -24,4 +24,4 @@ Example: ./myimage.jpg 110 40 240 1 art.txt
 
 ## Resources used
 
-- (OpenCV Docs & Tutorials)[https://docs.opencv.org/master/d9/df8/tutorial_root.html]
+- [OpenCV Docs & Tutorials](https://docs.opencv.org/master/d9/df8/tutorial_root.html)
