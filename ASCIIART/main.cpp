@@ -11,13 +11,23 @@
 using namespace cv;
 using namespace std;
 
+
+
+/*
+Press any key to end the program
+*/
 void anyKeyToExit()
 {
     cout << "Press Any Key To Exit...";
     char _ = _getch();
+    exit(-1);
 }
 
-
+/*
+Prints user input onto the console
+@param argc: size of input argument array
+@param argv: input argument array
+*/
 void printUserInput(int argc, char* argv[])
 {
     cout << "Your Input: ";
@@ -28,6 +38,10 @@ void printUserInput(int argc, char* argv[])
     cout << "\b " << endl;
 }
 
+
+/*
+Prints help onto the console
+*/
 void printHelp()
 {
     cout << "Usage: [image file path] [size] [low] [high] [black_bg] [text file path]" << endl << endl;
@@ -40,6 +54,12 @@ void printHelp()
     cout << "Example: ./myimage.jpg 110 40 240 1 art.txt" << endl;
 }
 
+/*
+Validates the input arguments from the user
+@param argc: size of input argument array
+@param argv: input argument array
+@return true if successful and false otherwise
+*/
 bool parseArgs(int argc, char* argv[])
 {
     if (argc == 7 && atoi(argv[2]) > 0 && atoi(argv[3]) >= 0 && atoi(argv[3]) < 255  && atoi(argv[4]) > 0 && atoi(argv[4]) <= 255 && atoi(argv[5]) >= 0 && atoi(argv[5]) <= 1)
@@ -69,6 +89,11 @@ bool parseArgs(int argc, char* argv[])
     }
 }
 
+/*
+Loads image file form disk
+@param image_file: path to the image file
+@return cv2 iamge array
+*/
 Mat readImage(string image_file)
 {
     Mat image = imread(image_file, IMREAD_GRAYSCALE); // Read the file
@@ -77,13 +102,16 @@ Mat readImage(string image_file)
     {
         cout << "Could not open or find the image" << endl;
         anyKeyToExit();
-        exit(-1);
     }
 
     return image;
 }
 
-string getImageFile() // input and parse image path
+/*
+Input and clean double quotes ("") from file path
+@return file path
+*/
+string getImageFile()
 {
     string image_name = "";
     cout << "Input Image Path: "; getline(cin, image_name);
@@ -96,6 +124,13 @@ string getImageFile() // input and parse image path
     return image_name;
 }
 
+
+/*
+Resizes the image while maintaining aspect ratio
+@param image: cv2 image array
+@param size: number of characters in a line
+@param y_shrink: vertical shrink constant
+*/
 void resizeImage(Mat& image, int size, double y_shrink)
 {
     double aspect_ratio = 0;
@@ -106,6 +141,12 @@ void resizeImage(Mat& image, int size, double y_shrink)
 
 }
 
+/*
+Normalizes the image (contrast)
+@param image : cv2 image array
+@param low : low value (0-255) of the normalization
+@param high : high value (0-255) of the normalization
+*/
 void normalizeImage(Mat& image, const int& low, const int& high)
 {
     for (int y = 0; y < image.size[0]; y++)
@@ -122,7 +163,13 @@ void normalizeImage(Mat& image, const int& low, const int& high)
     normalize(image, image, 0, 255, NORM_MINMAX);
 }
 
-
+/*
+processes image to produce ASCII
+@param image : cv2 image array
+@param chars : array of characters used for processing
+@param CHARS_SIZE : size of the array
+@return string of ascii characters
+*/
 string convertToASCII(const Mat& image, const char chars[], const int& CHARS_SIZE)
 {
     int lum = 0; // luminance
@@ -140,6 +187,11 @@ string convertToASCII(const Mat& image, const char chars[], const int& CHARS_SIZ
     return ascii;
 }
 
+/*
+Saves string as a text file
+@param ascii: ASCII string generated
+@param text_file: path of the output text file
+*/
 void saveAscii(const string& ascii, const string& text_file)
 {
     ofstream out_file;
@@ -147,6 +199,11 @@ void saveAscii(const string& ascii, const string& text_file)
     out_file << ascii;
 }
 
+/*
+Inverts the array of characters
+@param chars : array containing characters
+@param CHARS_SIZE : size of the array
+*/
 void invertChars(char chars[], const int& CHAR_SIZE)
 {
     for (int low = 0, high = CHAR_SIZE - 1; low < high; low++, high--)
