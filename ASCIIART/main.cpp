@@ -66,6 +66,7 @@ bool parseArgs(int argc, char* argv[])
 
     {
         cout << "Parse Successful..." << endl;
+        return true;
     }
     else if ( argc == 2 && ((string)argv[1] == "-h" || (string)argv[1] == "--help"))
     {
