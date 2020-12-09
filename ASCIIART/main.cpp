@@ -6,7 +6,7 @@
 #include <cmath>
 #include <conio.h>
 #include <fstream>
-
+#include <iomanip>
 
 using namespace cv;
 using namespace std;
@@ -16,6 +16,7 @@ void anyKeyToExit()
     cout << "Press Any Key To Exit...";
     char _ = _getch();
 }
+
 
 void printUserInput(int argc, char* argv[])
 {
@@ -27,19 +28,44 @@ void printUserInput(int argc, char* argv[])
     cout << "\b " << endl;
 }
 
-void parseArgs(int argc, char* argv[])
+void printHelp()
+{
+    cout << "Usage: [image file path] [size] [low] [high] [black_bg] [text file path]" << endl << endl;
+    cout << setw(20) << "image file path" << '\t' << "path to the image file you want to convert" << endl;
+    cout << setw(20) << "size" << '\t' << "number of characters in a row of the converted image (higher == more detail)" << endl;
+    cout << setw(20) << "low" << '\t' << "lower pixel value for normalizatiBon (0-255)" << endl;
+    cout << setw(20) << "high" << '\t' << "higher pixel value for normalization (0-255)" << endl;
+    cout << setw(20) << "black_bg" << '\t' << "whether to have the backgound of convertted image be black or not (0-1)(0 == false; 1 == true)" << endl;
+    cout << setw(20) << "text file path" << '\t' << "path to the text file where the converted image will be saved" << endl << endl;
+    cout << "Example: ./myimage.jpg 110 40 240 1 art.txt" << endl;
+}
+
+bool parseArgs(int argc, char* argv[])
 {
     if (argc == 7 && atoi(argv[2]) > 0 && atoi(argv[3]) >= 0 && atoi(argv[3]) < 255  && atoi(argv[4]) > 0 && atoi(argv[4]) <= 255 && atoi(argv[5]) >= 0 && atoi(argv[5]) <= 1)
 
     {
         cout << "Parse Successful..." << endl;
     }
+    else if ( argc == 2 && ((string)argv[1] == "-h" || (string)argv[1] == "--help"))
+    {
+        printHelp();
+        return true;
+    }
+    else if (argc == 1)
+    {
+        printHelp();
+        return false;;
+
+    }
     else
     {
         cout << "Parse Unsuccessful..." << endl;
-        cout << "Usage: [image file path] [size] [low] [high] [black_bg] [text file path]" << endl;
+
+        printHelp();
+
         printUserInput(argc, argv);
-        exit(0);
+        return false;
     }
 }
 
@@ -139,7 +165,10 @@ void invertChars(char chars[], const int& CHAR_SIZE)
 int main(int argc, char* argv[])
 {
 
-    parseArgs(argc, argv);
+    if (!parseArgs(argc, argv))
+    {
+        return 0;
+    }
 
     Mat image;
     const int CHARS_SIZE = 10; // `~!sTomN@
@@ -150,7 +179,7 @@ int main(int argc, char* argv[])
     //int low = 60;
     //int high = 245;
     //bool black_bg = false;
-    //string image_file;
+    //string image_file "image.jpg";
     //string text_file = "ASCII.txt";
 
     string image_file = (string)argv[1];
