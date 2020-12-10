@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 {
     Mat image;
     const int CHARS_SIZE = 10; // `~!sTomN@
-    char chars[CHARS_SIZE] = { ' ','`','~', '!', 's', 'T', 'o', 'm', 'N' , '@' };
+    char chars[CHARS_SIZE] = { ' ','`', '~', '!', 's', 'T', 'o', 'm', 'N' , '@' };
     double y_shrink = 1.956;
     string image_file;
     int size = 0;
@@ -147,7 +147,7 @@ void printHelp()
     cout << setw(20) << "size" << '\t' << "number of characters in a row of the converted image (higher == more detail)" << endl;
     cout << setw(20) << "low" << '\t' << "lower pixel value for normalizatiBon (0-255)" << endl;
     cout << setw(20) << "high" << '\t' << "higher pixel value for normalization (0-255)" << endl;
-    cout << setw(20) << "black_bg" << '\t' << "whether to have the backgound of convertted image be black or not (0-1)(0 == false; 1 == true)" << endl;
+    cout << setw(20) << "black_bg" << '\t' << "whether to have the background of converted image be black or not (0-1)(0 == false; 1 == true)" << endl;
     cout << setw(20) << "text file path" << '\t' << "path to the text file where the converted image will be saved" << endl << endl;
     cout << "Example: ./myimage.jpg 110 40 240 1 art.txt" << endl;
 }
