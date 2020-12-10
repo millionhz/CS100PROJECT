@@ -140,7 +140,7 @@ void printHelp()
     cout << "Usage: [image file path] [size] [low] [high] [black_bg] [text file path]" << endl << endl;
     cout << setw(20) << "image file path" << '\t' << "path to the image file you want to convert" << endl;
     cout << setw(20) << "size" << '\t' << "number of characters in a row of the converted image (higher == more detail)" << endl;
-    cout << setw(20) << "low" << '\t' << "lower pixel value for normalizatiBon (0-255)" << endl;
+    cout << setw(20) << "low" << '\t' << "lower pixel value for normalization (0-255)" << endl;
     cout << setw(20) << "high" << '\t' << "higher pixel value for normalization (0-255)" << endl;
     cout << setw(20) << "black_bg" << '\t' << "whether to have the background of converted image be black or not (0-1)(0 == false; 1 == true)" << endl;
     cout << setw(20) << "text file path" << '\t' << "path to the text file where the converted image will be saved" << endl << endl;
