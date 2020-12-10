@@ -1,7 +1,6 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
-//#include <opencv2/highgui.hpp>
 #include <iostream>
 #include <cmath>
 #include <conio.h>
@@ -266,11 +265,11 @@ void normalizeImage(Mat& image, const int& low, const int& high)
         for (int x = 0; x < image.size[1]; x++)
         {
             if ((int)image.at<uchar>(Point(x, y)) < low)
-            { 
+            {
                 image.at<uchar>(Point(x, y)) = low;
             }
             else if ((int)image.at<uchar>(Point(x, y)) > high)
-            { 
+            {
                 image.at<uchar>(Point(x, y)) = high;
             }
         }
@@ -338,13 +337,6 @@ void invertChars(char chars[], const int& CHAR_SIZE)
         swap(chars[low], chars[high]);
     }
 }
-
-//void _showImage(const Mat& image)
-//{
-//    //namedWindow("Display window", WINDOW_AUTOSIZE); // Create a window for display.
-//    imshow("Display window", image); // Show our image inside it.
-//    waitKey(0); // Wait for a keystroke in the window
-//}
 
 //int size = 110; // width
 //int low = 60;
