@@ -19,6 +19,7 @@ string cleanImagePath(string image_file);
 void printHelp();
 void promptUserForInput(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file);
 parsing parseArgs(int argc, char* argv[]);
+void extractInputsFromArgs(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file, char* argv[]);
 Mat readImage(string image_file);
 void resizeImage(Mat& image, int size, double y_shrink);
 void normalizeImage(Mat& image, const int& low, const int& high);
@@ -45,12 +46,7 @@ int main(int argc, char* argv[])
     const parsing result = parseArgs(argc, argv);
     if (result == parsing::SUCCESS)
     {
-        image_file = (string)argv[1];
-        size = atoi(argv[2]);
-        low = atoi(argv[3]);
-        high = atoi(argv[4]);
-        black_bg = (bool)atoi(argv[5]);
-        text_file = (string)argv[6];
+        extractInputsFromArgs(image_file, size, low, high, black_bg, text_file, argv);
     }
     else if (result == parsing::PROMPT)
     {
@@ -154,6 +150,7 @@ void printHelp()
 
 /*
 Prompt user for input
+@param All necessary inputs
 */
 void promptUserForInput(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file)
 {
@@ -211,6 +208,21 @@ parsing parseArgs(int argc, char* argv[])
         printUserInput(argc, argv);
         return parsing::FAIL;
     }
+}
+
+/*
+Extract values from argv
+@param All necessary inputs
+@param argv: input argument array
+*/
+void extractInputsFromArgs(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file, char* argv[])
+{
+    image_file = (string)argv[1];
+    size = atoi(argv[2]);
+    low = atoi(argv[3]);
+    high = atoi(argv[4]);
+    black_bg = (bool)atoi(argv[5]);
+    text_file = (string)argv[6];
 }
 
 /*
