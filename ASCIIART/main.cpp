@@ -22,6 +22,7 @@ parsing parseArgs(int argc, char* argv[]);
 Mat readImage(string image_file);
 void resizeImage(Mat& image, int size, double y_shrink);
 void normalizeImage(Mat& image, const int& low, const int& high);
+void deNoise(Mat& image);
 string convertToASCII(const Mat& image, const char chars[], const int& CHARS_SIZE);
 void saveAscii(const string& ascii, const string& text_file);
 void invertChars(char chars[], const int& CHAR_SIZE);
@@ -263,6 +264,17 @@ void normalizeImage(Mat& image, const int& low, const int& high)
 }
 
 /*
+Denoise the image using the Bilateral Filter
+@param image: cv2 image array
+*/
+void deNoise(Mat& image)
+{
+    Mat out = image.clone();
+    bilateralFilter(image, out, 2, 60, 60);
+    image = out.clone();
+}
+
+/*
 processes image to produce ASCII
 @param image : cv2 image array
 @param chars : array of characters used for processing
@@ -324,3 +336,11 @@ void invertChars(char chars[], const int& CHAR_SIZE)
 //bool black_bg = false;
 //string image_file "image.jpg";
 //string text_file = "ASCII.txt";
+
+/*
+CS 100 Project
+By:
+Muhammad Hamza 24100192
+Imaan Hameed 24100093
+Resources Used: - https://docs.opencv.org/master/d9/df8/tutorial_root.html
+*/
