@@ -254,9 +254,13 @@ void normalizeImage(Mat& image, const int& low, const int& high)
         for (int x = 0; x < image.size[1]; x++)
         {
             if ((int)image.at<uchar>(Point(x, y)) < low)
+            { 
                 image.at<uchar>(Point(x, y)) = low;
+            }
             else if ((int)image.at<uchar>(Point(x, y)) > high)
+            { 
                 image.at<uchar>(Point(x, y)) = high;
+            }
         }
     }
 
