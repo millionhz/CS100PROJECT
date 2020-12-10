@@ -17,7 +17,7 @@ void printUserInput(int argc, char* argv[]);
 string cleanImagePath(string image_file);
 void printHelp();
 void promptUserForInput(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file);
-parsing parseArgs(int argc, char* argv[]);
+parsing validateArgs(int argc, char* argv[]);
 void extractInputsFromArgs(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file, char* argv[]);
 Mat readImage(string image_file);
 void resizeImage(Mat& image, int size, double y_shrink);
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     bool prompt_used = false;
     string ascii = "";
 
-    const parsing result = parseArgs(argc, argv);
+    const parsing result = validateArgs(argc, argv);
     if (result == parsing::SUCCESS)
     {
         extractInputsFromArgs(image_file, size, low, high, black_bg, text_file, argv);
@@ -182,7 +182,7 @@ Validates the input arguments from the user
 @param argv: input argument array
 @return true if successful and false otherwise
 */
-parsing parseArgs(int argc, char* argv[])
+parsing validateArgs(int argc, char* argv[])
 {
     if (argc == 7 && atoi(argv[2]) > 0 && atoi(argv[3]) >= 0 && atoi(argv[3]) < 255 && atoi(argv[4]) > 0 && atoi(argv[4]) <= 255 && atoi(argv[5]) >= 0 && atoi(argv[5]) <= 1)
     {
