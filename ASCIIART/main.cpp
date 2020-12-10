@@ -350,5 +350,7 @@ CS 100 Project
 By:
 Muhammad Hamza 24100192
 Imaan Hameed 24100093
-Resources Used: - https://docs.opencv.org/master/d9/df8/tutorial_root.html
+Resources Used: 
+    - https://docs.opencv.org/master/d9/df8/tutorial_root.html
+    - https://docs.opencv.org/master/modules.html
 */
