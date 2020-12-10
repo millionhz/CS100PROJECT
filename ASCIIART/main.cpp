@@ -13,6 +13,91 @@ using namespace std;
 
 enum class parsing { SUCCESS, FAIL, PROMPT };
 
+void anyKeyToExit();
+void printUserInput(int argc, char* argv[]);
+string cleanImagePath(string image_file);
+void printHelp();
+void promptUserForInput(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file);
+parsing parseArgs(int argc, char* argv[]);
+Mat readImage(string image_file);
+void resizeImage(Mat& image, int size, double y_shrink);
+void normalizeImage(Mat& image, const int& low, const int& high);
+string convertToASCII(const Mat& image, const char chars[], const int& CHARS_SIZE);
+void saveAscii(const string& ascii, const string& text_file);
+void invertChars(char chars[], const int& CHAR_SIZE);
+
+int main(int argc, char* argv[])
+{
+    Mat image;
+    const int CHARS_SIZE = 10; // `~!sTomN@
+    char chars[CHARS_SIZE] = { ' ','`','~', '!', 's', 'T', 'o', 'm', 'N' , '@' };
+    double y_shrink = 1.956;
+    string image_file;
+    int size = 0;
+    int low = 0;
+    int high = 0;
+    bool black_bg = false;
+    string text_file = "";
+    bool prompt_used = false;
+    string ascii = "";
+
+    const parsing result = parseArgs(argc, argv);
+    if (result == parsing::SUCCESS)
+    {
+        image_file = (string)argv[1];
+        size = atoi(argv[2]);
+        low = atoi(argv[3]);
+        high = atoi(argv[4]);
+        black_bg = (bool)atoi(argv[5]);
+        text_file = (string)argv[6];
+    }
+    else if (result == parsing::PROMPT)
+    {
+        promptUserForInput(image_file, size, low, high, black_bg, text_file);
+        prompt_used = true;
+    }
+    else
+    {
+        return 0;
+    }
+
+    if (!black_bg)
+    {
+        invertChars(chars, CHARS_SIZE);
+    }
+
+    image = readImage(image_file);
+    if (image.empty())
+    {
+        cout << "Failed to open specified image file" << endl;
+        if (prompt_used)
+        {
+            anyKeyToExit();
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    resizeImage(image, size, y_shrink);
+
+    normalizeImage(image, low, high);
+
+    ascii = convertToASCII(image, chars, CHARS_SIZE);
+
+    cout << ascii; // print ascii on console
+
+    saveAscii(ascii, text_file);
+
+    if (prompt_used)
+    {
+        anyKeyToExit();
+    }
+
+    return 0;
+}
+
 /*
 Press any key to end the program
 */
@@ -48,7 +133,6 @@ string cleanImagePath(string image_file)
     {
         image_file = image_file.substr(1, image_file.length() - 2);
     }
-
     return image_file;
 }
 
@@ -66,7 +150,6 @@ void printHelp()
     cout << setw(20) << "text file path" << '\t' << "path to the text file where the converted image will be saved" << endl << endl;
     cout << "Example: ./myimage.jpg 110 40 240 1 art.txt" << endl;
 }
-
 
 /*
 Prompt user for input
@@ -90,11 +173,10 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, bool
         cout << "Input upper value for normalization (0-255): "; cin >> high;
     } while (high < 1 && high > 255);
 
-    cout << "Produce image with black background config (0 = no | >=1 = yes): "; cin >> black_bg;
+    cout << "Produce image with black background config (0 = no | !0 = yes): "; cin >> black_bg;
 
     cin.ignore(1000, '\n');
-    cout << "Input text file path for output : "; getline(cin, text_file); text_file = cleanImagePath(text_file);
-
+    cout << "Input text file path for output: "; getline(cin, text_file); text_file = cleanImagePath(text_file);
 }
 
 /*
@@ -236,82 +318,9 @@ void invertChars(char chars[], const int& CHAR_SIZE)
 //    waitKey(0); // Wait for a keystroke in the window
 //}
 
-int main(int argc, char* argv[])
-{
-    Mat image;
-    const int CHARS_SIZE = 10; // `~!sTomN@
-    char chars[CHARS_SIZE] = { ' ','`','~', '!', 's', 'T', 'o', 'm', 'N' , '@' };
-    double y_shrink = 1.956;
-    string image_file;
-    int size = 0;
-    int low = 0;
-    int high = 0;
-    bool black_bg = false;
-    string text_file = "";
-    bool prompt_used = false;
-
-    const parsing result = parseArgs(argc, argv);
-    if (result == parsing::SUCCESS)
-    {
-        image_file = (string)argv[1];
-        size = atoi(argv[2]);
-        low = atoi(argv[3]);
-        high = atoi(argv[4]);
-        black_bg = (bool)atoi(argv[5]);
-        text_file = (string)argv[6];
-    }
-    else if (result == parsing::PROMPT)
-    {
-        promptUserForInput(image_file, size, low, high, black_bg, text_file);
-        prompt_used = true;
-    }
-    else
-    {
-        return 0;
-    }
-
-    //int size = 110; // width
-    //int low = 60;
-    //int high = 245;
-    //bool black_bg = false;
-    //string image_file "image.jpg";
-    //string text_file = "ASCII.txt";
-
-    string ascii = "";
-
-    if (!black_bg)
-    {
-        invertChars(chars, CHARS_SIZE);
-    }
-
-    image = readImage(image_file);
-    if (image.empty())
-    {
-        cout << "Failed to open specified image file" << endl;
-        if (prompt_used)
-        {
-            anyKeyToExit();
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    resizeImage(image, size, y_shrink);
-
-    normalizeImage(image, low, high);
-
-    ascii = convertToASCII(image, chars, CHARS_SIZE);
-
-    cout << ascii; // print ascii on console
-
-    saveAscii(ascii, text_file);
-
-    if (prompt_used)
-    {
-        anyKeyToExit();
-    }
-
-    return 0;
-}
+//int size = 110; // width
+//int low = 60;
+//int high = 245;
+//bool black_bg = false;
+//string image_file "image.jpg";
+//string text_file = "ASCII.txt";
