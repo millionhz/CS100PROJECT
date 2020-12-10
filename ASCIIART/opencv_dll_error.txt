@@ -1,1 +1,1 @@
-Add .\ASCIIART\ASCIIART\opencv\build\x64\vc15\bin\opencv_world450.dll to environment path or put in the same direcotry as the executable
+Add .\ASCIIART\opencv\build\x64\vc15\bin\opencv_world450.dll to environment path or put in the same direcotry as the executable

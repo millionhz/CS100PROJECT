@@ -22,6 +22,10 @@ Usage: [image file path] [size] [low] [high] [black_bg] [text file path]
 Example: ./myimage.jpg 110 40 240 1 art.txt
 ```
 
+## Where is `opencv_world450.dll`
+
+`.\ASCIIART\opencv\build\x64\vc15\bin\opencv_world450.dll`
+
 ## Resources used
 
 - [OpenCV Docs & Tutorials](https://docs.opencv.org/master/d9/df8/tutorial_root.html)
