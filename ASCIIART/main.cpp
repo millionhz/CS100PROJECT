@@ -18,7 +18,7 @@ void printUserInput(int argc, char* argv[]);
 string cleanImagePath(string image_file);
 void printHelp();
 void promptUserForInput(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
-bool extractInputFromArgs(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, char* argv[]);
+bool extractInputFromArgs(char* argv[], string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
 Mat readImage(string image_file);
 void resizeImage(Mat& image, int size, double y_shrink);
 void normalizeImage(Mat& image, const int& low, const int& high);
@@ -45,17 +45,15 @@ int main(int argc, char* argv[])
 
     if (argc == 7)
     {
-        bool success = extractInputFromArgs(image_file, size, low, high, black_bg, text_file, argv);
+        bool success = extractInputFromArgs(argv, image_file, size, low, high, black_bg, text_file);
         if (!success)
         {
             return -1;
         }
-        cout << image_file << '\t' << size << '\t' << low << '\t' << high << '\t' << black_bg << '\t' << text_file << endl;
     }
     else if (argc == 1)
     {
-            promptUserForInput(image_file, size, low, high, black_bg, text_file);
-
+        promptUserForInput(image_file, size, low, high, black_bg, text_file);
     }
     else if (argc == 2 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
     {
@@ -99,7 +97,9 @@ int main(int argc, char* argv[])
 
     cout << ascii; // print ascii on console
 
+
     saveAscii(ascii, text_file);
+
 
     if (prompt_used)
     {
@@ -238,7 +238,7 @@ bool convertAndAssign(int& variable, char* value)
 Extracts and validates inputs from argv
 @return: true if extraction successfull else false
 */
-bool extractInputFromArgs(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, char* argv[])
+bool extractInputFromArgs(char* argv[], string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file)
 {
     /*
     string:
