@@ -19,6 +19,7 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, int&
 bool convertAndAssignInt(int& variable, char* value);
 bool convertAndAssignDouble(double& variable, char* value);
 bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink);
+bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink);
 Mat readImage(string image_file);
 void resizeImage(Mat& image, int size, double y_shrink);
 void normalizeImage(Mat& image, const int& low, const int& high);
@@ -32,66 +33,71 @@ int main(int argc, char* argv[])
     Mat image;
     const int CHARS_SIZE = 10; // `~!sTomN@
     char chars[CHARS_SIZE] = { ' ','`', '~', '!', 's', 'T', 'o', 'm', 'N' , '@' };
-    double y_shrink = 1.956;
     string image_file;
     int size = 0;
     int low = 0;
     int high = 0;
     int black_bg = 1;
     string text_file = "";
+    double y_shrink = 1.956;
     bool prompt_used = false;
     string ascii = "";
 
-    if (argc == 8)
+    if (!manageInputs(argv, argc, image_file, size, low, high, black_bg, text_file, y_shrink))
     {
-        bool success = extractInputFromArgs(argv, 8, image_file, size, low, high, black_bg, text_file, y_shrink);
-        if (!success)
-        {
-            return -1;
-        }
-    }
-    else if (argc == 7)
-    {
-        bool success = extractInputFromArgs(argv, 7, image_file, size, low, high, black_bg, text_file, y_shrink);
-        if (!success)
-        {
-            return -1;
-        }
-    }
-    else if (argc == 6)
-    {
-        bool success = extractInputFromArgs(argv, 6, image_file, size, low, high, black_bg, text_file, y_shrink);
-        if (!success)
-        {
-            return -1;
-        }
-    }
-    else if (argc == 5)
-    {
-        bool success = extractInputFromArgs(argv, 5, image_file, size, low, high, black_bg, text_file, y_shrink);
-        if (!success)
-        {
-            return -1;
-        }
-    }
-    else if (argc == 1)
-    {
-        promptUserForInput(image_file, size, low, high, black_bg, text_file, y_shrink);
-    }
-    else if (argc == 2 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
-    {
-        printHelp();
-        return 0;
-    }
-    else
-    {
-        cout << "Parse Unsuccessful..." << endl;
-
-        printHelp();
-
-        printUserInput(argc, argv);
         return -1;
     }
+
+    //if (argc == 8)
+    //{
+    //    bool success = extractInputFromArgs(argv, 8, image_file, size, low, high, black_bg, text_file, y_shrink);
+    //    if (!success)
+    //    {
+    //        return -1;
+    //    }
+    //}
+    //else if (argc == 7)
+    //{
+    //    bool success = extractInputFromArgs(argv, 7, image_file, size, low, high, black_bg, text_file, y_shrink);
+    //    if (!success)
+    //    {
+    //        return -1;
+    //    }
+    //}
+    //else if (argc == 6)
+    //{
+    //    bool success = extractInputFromArgs(argv, 6, image_file, size, low, high, black_bg, text_file, y_shrink);
+    //    if (!success)
+    //    {
+    //        return -1;
+    //    }
+    //}
+    //else if (argc == 5)
+    //{
+    //    bool success = extractInputFromArgs(argv, 5, image_file, size, low, high, black_bg, text_file, y_shrink);
+    //    if (!success)
+    //    {
+    //        return -1;
+    //    }
+    //}
+    //else if (argc == 1)
+    //{
+    //    promptUserForInput(image_file, size, low, high, black_bg, text_file, y_shrink);
+    //}
+    //else if (argc == 2 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
+    //{
+    //    printHelp();
+    //    return 0;
+    //}
+    //else
+    //{
+    //    cout << "Parse Unsuccessful..." << endl;
+
+    //    printHelp();
+
+    //    printUserInput(argc, argv);
+    //    return -1;
+    //}
 
     if (!black_bg)
     {
@@ -248,7 +254,7 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, int&
 
 
 /*
-Convert and Assign a string value to an interger variable
+Convert and Assign a string value to an integer variable
 @param variable: variable to store the value to
 @param value: the string value that will be converted
 @return: true if conversion is successful
@@ -295,16 +301,16 @@ bool convertAndAssignDouble(double& variable, char* value)
 
 /*
 Extracts and validates inputs from argv
-@return: true if extraction successfull else false
+@return: true if extraction successful else false
 */
-bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink)
+bool extractInputFromArgs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink)
 {
-    if (_argc > 1)
+    if (argc > 1)
     {
         image_file = string(argv[1]);
     }
 
-    if (_argc > 2)
+    if (argc > 2)
     {
         if (!(convertAndAssignInt(size, argv[2]) && size > 0))
         {
@@ -312,7 +318,7 @@ bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size
         }
     }
 
-    if (_argc > 3)
+    if (argc > 3)
     {
         if (!(convertAndAssignInt(low, argv[3]) && low >= 0 && low <= 255))
         {
@@ -320,7 +326,7 @@ bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size
         }
     }
 
-    if (_argc > 4)
+    if (argc > 4)
     {
         if (!(convertAndAssignInt(high, argv[4]) && high >= 0 && high <= 255))
         {
@@ -332,7 +338,7 @@ bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size
         return false;
     }
 
-    if (_argc > 5)
+    if (argc > 5)
     {
         if (!(convertAndAssignInt(black_bg, argv[5]) && black_bg >= 0 && black_bg <= 1))
         {
@@ -340,12 +346,12 @@ bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size
         }
     }
 
-    if (_argc > 6)
+    if (argc > 6)
     {
         text_file = string(argv[6]);
     }
 
-    if (_argc > 7)
+    if (argc > 7)
     {
         if (!(convertAndAssignDouble(y_shrink, argv[7]) && y_shrink > 0))
         {
@@ -356,10 +362,69 @@ bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size
     return true;
 }
 
+
+/*
+Manage inputs both from commandline and prompt
+@return: true if successful else false
+*/
+bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink)
+{
+    if (argc == 8)
+    {
+        bool success = extractInputFromArgs(argv, 8, image_file, size, low, high, black_bg, text_file, y_shrink);
+        if (!success)
+        {
+            return false;
+        }
+    }
+    else if (argc == 7)
+    {
+        bool success = extractInputFromArgs(argv, 7, image_file, size, low, high, black_bg, text_file, y_shrink);
+        if (!success)
+        {
+            return false;
+        }
+    }
+    else if (argc == 6)
+    {
+        bool success = extractInputFromArgs(argv, 6, image_file, size, low, high, black_bg, text_file, y_shrink);
+        if (!success)
+        {
+            return false;
+        }
+    }
+    else if (argc == 5)
+    {
+        bool success = extractInputFromArgs(argv, 5, image_file, size, low, high, black_bg, text_file, y_shrink);
+        if (!success)
+        {
+            return false;
+        }
+    }
+    else if (argc == 1)
+    {
+        promptUserForInput(image_file, size, low, high, black_bg, text_file, y_shrink);
+    }
+    else if (argc == 2 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
+    {
+        printHelp();
+        return true;
+    }
+    else
+    {
+        cout << "Parse Unsuccessful..." << endl;
+
+        printHelp();
+
+        printUserInput(argc, argv);
+        return false;
+    }
+}
+
 /*
 Loads image file form disk
 @param image_file: path to the image file
-@return cv2 iamge array
+@return cv2 image array
 */
 Mat readImage(string image_file)
 {
