@@ -15,7 +15,7 @@ void anyKeyToExit();
 void printUserInput(int argc, char* argv[]);
 string cleanImagePath(string image_file);
 void printHelp();
-void promptUserForInput(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
+void promptUserForInput(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink);
 bool convertAndAssignInt(int& variable, char* value);
 bool convertAndAssignDouble(double& variable, char* value);
 bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink);
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     }
     else if (argc == 1)
     {
-        promptUserForInput(image_file, size, low, high, black_bg, text_file);
+        promptUserForInput(image_file, size, low, high, black_bg, text_file, y_shrink);
     }
     else if (argc == 2 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
     {
@@ -192,7 +192,7 @@ void printHelp()
 Prompt user for input
 @param All necessary inputs
 */
-void promptUserForInput(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file)
+void promptUserForInput(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink)
 {
     cout << "Input image file: "; getline(cin, image_file); image_file = cleanImagePath(image_file);
 
@@ -234,6 +234,16 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, int&
 
     cin.ignore(1000, '\n');
     cout << "Input text file path for output: "; getline(cin, text_file); text_file = cleanImagePath(text_file);
+
+    do
+    {
+        if (cin.fail())
+        {
+            exit(-1);
+        }
+        cout << "Value for vertical shrinking: "; cin >> y_shrink;
+    } while (y_shrink < 0);
+
 }
 
 
