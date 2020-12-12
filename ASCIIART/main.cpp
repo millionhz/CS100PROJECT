@@ -11,15 +11,14 @@
 using namespace cv;
 using namespace std;
 
-enum class parsing { SUCCESS, FAIL, PROMPT };
-
 void anyKeyToExit();
 void printUserInput(int argc, char* argv[]);
 string cleanImagePath(string image_file);
 void printHelp();
 void promptUserForInput(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
-//bool extractInputFromArgs(char* argv[], string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
-bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
+bool convertAndAssignInt(int& variable, char* value);
+bool convertAndAssignDouble(double& variable, char* value);
+bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink);
 Mat readImage(string image_file);
 void resizeImage(Mat& image, int size, double y_shrink);
 void normalizeImage(Mat& image, const int& low, const int& high);
@@ -38,15 +37,22 @@ int main(int argc, char* argv[])
     int size = 0;
     int low = 0;
     int high = 0;
-    int black_bg = 0;
+    int black_bg = 1;
     string text_file = "";
     bool prompt_used = false;
     string ascii = "";
 
-
-    if (argc == 7)
+    if (argc == 8)
     {
-        bool success = extractInputFromArgs(argv, 7, image_file, size, low, high, black_bg, text_file);
+        bool success = extractInputFromArgs(argv, 8, image_file, size, low, high, black_bg, text_file, y_shrink);
+        if (!success)
+        {
+            return -1;
+        }
+    }
+    else if (argc == 7)
+    {
+        bool success = extractInputFromArgs(argv, 7, image_file, size, low, high, black_bg, text_file, y_shrink);
         if (!success)
         {
             return -1;
@@ -54,22 +60,19 @@ int main(int argc, char* argv[])
     }
     else if (argc == 6)
     {
-        bool success = extractInputFromArgs(argv, 6, image_file, size, low, high, black_bg, text_file);
+        bool success = extractInputFromArgs(argv, 6, image_file, size, low, high, black_bg, text_file, y_shrink);
         if (!success)
         {
             return -1;
         }
-        text_file = "";
     }
     else if (argc == 5)
     {
-        bool success = extractInputFromArgs(argv, 5, image_file, size, low, high, black_bg, text_file);
+        bool success = extractInputFromArgs(argv, 5, image_file, size, low, high, black_bg, text_file, y_shrink);
         if (!success)
         {
             return -1;
         }
-        text_file = "";
-        black_bg = 1;
     }
     else if (argc == 1)
     {
@@ -173,14 +176,15 @@ Prints help onto the console
 */
 void printHelp()
 {
-    cout << "Usage: [image file path] [size] [low] [high] {[black_bg] [text file path]}" << endl << endl;
+    cout << "Usage: [image file path] [size] [low] [high] {[black_bg] [text file path] [y_shrink]}" << endl << endl;
     cout << setw(20) << "image file path" << '\t' << "path to the image file you want to convert" << endl;
     cout << setw(20) << "size" << '\t' << "number of characters in a row of the converted image (higher == more detail)" << endl;
     cout << setw(20) << "low" << '\t' << "lower pixel value for normalization (0-255)" << endl;
     cout << setw(20) << "high" << '\t' << "higher pixel value for normalization (0-255)" << endl;
     cout << "Optional:" << endl;
     cout << setw(20) << "black_bg" << '\t' << "whether to have the background of converted image be black or not (0-1)(0 == false; 1 == true)" << endl;
-    cout << setw(20) << "text file path" << '\t' << "path to the text file where the converted image will be saved" << endl << endl;
+    cout << setw(20) << "text file path" << '\t' << "path to the text file where the converted image will be saved" << endl;
+    cout << setw(20) << "y_shrink" << '\t' << "vertical shrink of input image" << endl;
     cout << "Example: ./myimage.jpg 110 40 240 1 art.txt" << endl;
 }
 
@@ -225,7 +229,7 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, int&
         {
             exit(-1);
         }
-    cout << "Produce image with black background config (0 = no | 1 = yes): "; cin >> black_bg;
+        cout << "Produce image with black background config (0 = no | 1 = yes): "; cin >> black_bg;
     } while (black_bg < 0 && black_bg > 1);
 
     cin.ignore(1000, '\n');
@@ -239,7 +243,7 @@ Convert and Assign a string value to an interger variable
 @param value: the string value that will be converted
 @return: true if conversion is successful
 */
-bool convertAndAssign(int& variable, char* value)
+bool convertAndAssignInt(int& variable, char* value)
 {
     size_t converted;
     try
@@ -257,10 +261,33 @@ bool convertAndAssign(int& variable, char* value)
 }
 
 /*
+Convert and Assign a string value to an double variable
+@param variable: variable to store the value to
+@param value: the string value that will be converted
+@return: true if conversion is successful
+*/
+bool convertAndAssignDouble(double& variable, char* value)
+{
+    size_t converted;
+    try
+    {
+        variable = stod(value, &converted);
+        if (converted == string(value).length())
+            return true;
+        else
+            return false;
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+/*
 Extracts and validates inputs from argv
 @return: true if extraction successfull else false
 */
-bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file)
+bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink)
 {
     if (_argc > 1)
     {
@@ -269,7 +296,7 @@ bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size
 
     if (_argc > 2)
     {
-        if (!(convertAndAssign(size, argv[2]) && size > 0))
+        if (!(convertAndAssignInt(size, argv[2]) && size > 0))
         {
             return false;
         }
@@ -277,7 +304,7 @@ bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size
 
     if (_argc > 3)
     {
-        if (!(convertAndAssign(low, argv[3]) && low >= 0 && low <= 255))
+        if (!(convertAndAssignInt(low, argv[3]) && low >= 0 && low <= 255))
         {
             return false;
         }
@@ -285,7 +312,7 @@ bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size
 
     if (_argc > 4)
     {
-        if (!(convertAndAssign(high, argv[4]) && high >= 0 && high <= 255))
+        if (!(convertAndAssignInt(high, argv[4]) && high >= 0 && high <= 255))
         {
             return false;
         }
@@ -297,7 +324,7 @@ bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size
 
     if (_argc > 5)
     {
-        if (!(convertAndAssign(black_bg, argv[5]) && black_bg >= 0 && black_bg <= 1))
+        if (!(convertAndAssignInt(black_bg, argv[5]) && black_bg >= 0 && black_bg <= 1))
         {
             return false;
         }
@@ -308,34 +335,16 @@ bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size
         text_file = string(argv[6]);
     }
 
+    if (_argc > 7)
+    {
+        if (!(convertAndAssignDouble(y_shrink, argv[7]) && y_shrink > 0))
+        {
+            return false;
+        }
+    }
+
     return true;
 }
-//bool extractInputFromArgs(char* argv[], string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file)
-//{
-//    /*
-//    string:
-//        - image_file
-//        - text_file
-//    int:
-//        - size
-//        - low
-//        - high
-//        - black_bg
-//    */
-//    if (convertAndAssign(size, argv[2]) && convertAndAssign(low, argv[3]) && convertAndAssign(high, argv[4]) && convertAndAssign(black_bg, argv[5]))
-//    {
-//        if (size > 0 && low >= 0 && low < 255 && high > 0 && high <= 255 && black_bg >= 0 && black_bg <=1)
-//        {
-//            image_file = string(argv[1]);
-//            text_file = string(argv[6]);
-//            return true;
-//        }
-//        else
-//        {
-//            return false;
-//        }
-//    }
-//}
 
 /*
 Loads image file form disk
@@ -349,6 +358,7 @@ Mat readImage(string image_file)
     return image;
 }
 
+/*
 /*
 Resizes the image while maintaining aspect ratio
 @param image: cv2 image array
@@ -463,7 +473,7 @@ CS 100 Project
 By:
 Muhammad Hamza 24100192
 Imaan Hameed 24100093
-Resources Used: 
+Resources Used:
     - https://docs.opencv.org/master/d9/df8/tutorial_root.html
     - https://docs.opencv.org/master/modules.html
 */
