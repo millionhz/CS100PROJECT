@@ -6,6 +6,7 @@
 #include <conio.h>
 #include <fstream>
 #include <iomanip>
+#include <string>
 
 using namespace cv;
 using namespace std;
@@ -16,9 +17,8 @@ void anyKeyToExit();
 void printUserInput(int argc, char* argv[]);
 string cleanImagePath(string image_file);
 void printHelp();
-void promptUserForInput(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file);
-parsing validateArgs(int argc, char* argv[]);
-void extractInputsFromArgs(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file, char* argv[]);
+void promptUserForInput(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
+bool extractInputFromArgs(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, char* argv[]);
 Mat readImage(string image_file);
 void resizeImage(Mat& image, int size, double y_shrink);
 void normalizeImage(Mat& image, const int& low, const int& high);
@@ -37,25 +37,55 @@ int main(int argc, char* argv[])
     int size = 0;
     int low = 0;
     int high = 0;
-    bool black_bg = false;
+    int black_bg = 0;
     string text_file = "";
     bool prompt_used = false;
     string ascii = "";
 
-    const parsing result = validateArgs(argc, argv);
-    if (result == parsing::SUCCESS)
+
+    if (argc == 7)
     {
-        extractInputsFromArgs(image_file, size, low, high, black_bg, text_file, argv);
+        bool success = extractInputFromArgs(image_file, size, low, high, black_bg, text_file, argv);
+        if (!success)
+        {
+            return -1;
+        }
+        cout << image_file << '\t' << size << '\t' << low << '\t' << high << '\t' << black_bg << '\t' << text_file << endl;
     }
-    else if (result == parsing::PROMPT)
+    else if (argc == 1)
     {
-        promptUserForInput(image_file, size, low, high, black_bg, text_file);
-        prompt_used = true;
+            promptUserForInput(image_file, size, low, high, black_bg, text_file);
+
+    }
+    else if (argc == 2 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
+    {
+        printHelp();
+        return 0;
     }
     else
     {
-        return 0;
+        cout << "Parse Unsuccessful..." << endl;
+
+        printHelp();
+
+        printUserInput(argc, argv);
+        return -1;
     }
+
+    //const parsing result = validateArgs(argc, argv);
+    //if (result == parsing::SUCCESS)
+    //{
+    //    extractInputsFromArgs(image_file, size, low, high, black_bg, text_file, argv);
+    //}
+    //else if (result == parsing::PROMPT)
+    //{
+    //    promptUserForInput(image_file, size, low, high, black_bg, text_file);
+    //    prompt_used = true;
+    //}
+    //else
+    //{
+    //    return 0;
+    //}
 
     if (!black_bg)
     {
@@ -72,7 +102,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            return 0;
+            return -1;
         }
     }
 
@@ -151,29 +181,104 @@ void printHelp()
 Prompt user for input
 @param All necessary inputs
 */
-void promptUserForInput(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file)
+void promptUserForInput(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file)
 {
     cout << "Input image file: "; getline(cin, image_file); image_file = cleanImagePath(image_file);
 
     do
     {
+        if (cin.fail())
+        {
+            exit(-1);
+        }
         cout << "Input Size (>0): "; cin >> size;
     } while (size < 1);
 
     do
     {
+        if (cin.fail())
+        {
+            exit(-1);
+        }
         cout << "Input lower value for normalization (0-255): "; cin >> low;
     } while (low < 1 && low > 255);
 
     do
     {
+        if (cin.fail())
+        {
+            exit(-1);
+        }
         cout << "Input upper value for normalization (0-255): "; cin >> high;
     } while (high < 1 && high > 255);
 
-    cout << "Produce image with black background config (0 = no | !0 = yes): "; cin >> black_bg;
+    do
+    {
+        if (cin.fail())
+        {
+            exit(-1);
+        }
+    cout << "Produce image with black background config (0 = no | 1 = yes): "; cin >> black_bg;
+    } while (black_bg < 0 && black_bg > 1);
 
     cin.ignore(1000, '\n');
     cout << "Input text file path for output: "; getline(cin, text_file); text_file = cleanImagePath(text_file);
+}
+
+
+/*
+Convert and Assign a string value to an interger variable
+@param variable: variable to store the value to
+@param value: the string value that will be converted
+@return: true if conversion is successful
+*/
+bool convertAndAssign(int& variable, char* value)
+{
+    size_t converted;
+    try
+    {
+        variable = stoi(value, &converted);
+        if (converted == string(value).length())
+            return true;
+        else
+            return false;
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+/*
+Extracts and validates inputs from argv
+@return: true if extraction successfull else false
+*/
+bool extractInputFromArgs(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, char* argv[])
+{
+    /*
+    string:
+        - image_file
+        - text_file
+    int:
+        - size
+        - low
+        - high
+        - black_bg
+    */
+    if (convertAndAssign(size, argv[2]) && convertAndAssign(low, argv[3]) && convertAndAssign(high, argv[4]) && convertAndAssign(black_bg, argv[5]))
+    {
+        if (size > 0 && low >= 0 && low < 255 && high > 0 && high <= 255 && black_bg >= 0 && black_bg <=1)
+        {
+            image_file = string(argv[1]);
+            text_file = string(argv[6]);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return false;
 }
 
 /*
@@ -182,47 +287,47 @@ Validates the input arguments from the user
 @param argv: input argument array
 @return true if successful and false otherwise
 */
-parsing validateArgs(int argc, char* argv[])
-{
-    if (argc == 7 && atoi(argv[2]) > 0 && atoi(argv[3]) >= 0 && atoi(argv[3]) < 255 && atoi(argv[4]) > 0 && atoi(argv[4]) <= 255 && atoi(argv[5]) >= 0 && atoi(argv[5]) <= 1)
-    {
-        cout << "Parse Successful..." << endl;
-        return parsing::SUCCESS;
-    }
-    else if (argc == 2 && ((string)argv[1] == "-h" || (string)argv[1] == "--help"))
-    {
-        printHelp();
-        return parsing::FAIL;
-    }
-    else if (argc == 1)
-    {
-        return parsing::PROMPT;
-    }
-    else
-    {
-        cout << "Parse Unsuccessful..." << endl;
-
-        printHelp();
-
-        printUserInput(argc, argv);
-        return parsing::FAIL;
-    }
-}
+//parsing validateArgs(int argc, char* argv[])
+//{
+//    if (argc == 7 && atoi(argv[2]) > 0 && atoi(argv[3]) >= 0 && atoi(argv[3]) < 255 && atoi(argv[4]) > 0 && atoi(argv[4]) <= 255 && atoi(argv[5]) >= 0 && atoi(argv[5]) <= 1)
+//    {
+//        cout << "Parse Successful..." << endl;
+//        return parsing::SUCCESS;
+//    }
+//    else if (argc == 2 && ((string)argv[1] == "-h" || (string)argv[1] == "--help"))
+//    {
+//        printHelp();
+//        return parsing::FAIL;
+//    }
+//    else if (argc == 1)
+//    {
+//        return parsing::PROMPT;
+//    }
+//    else
+//    {
+//        cout << "Parse Unsuccessful..." << endl;
+//
+//        printHelp();
+//
+//        printUserInput(argc, argv);
+//        return parsing::FAIL;
+//    }
+//}
 
 /*
 Extract values from argv
 @param All necessary inputs
 @param argv: input argument array
 */
-void extractInputsFromArgs(string& image_file, int& size, int& low, int& high, bool& black_bg, string& text_file, char* argv[])
-{
-    image_file = (string)argv[1];
-    size = atoi(argv[2]);
-    low = atoi(argv[3]);
-    high = atoi(argv[4]);
-    black_bg = (bool)atoi(argv[5]);
-    text_file = (string)argv[6];
-}
+//void extractInputsFromArgs(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, char* argv[])
+//{
+//    image_file = (string)argv[1];
+//    size = atoi(argv[2]);
+//    low = atoi(argv[3]);
+//    high = atoi(argv[4]);
+//    black_bg = (bool)atoi(argv[5]);
+//    text_file = (string)argv[6];
+//}
 
 /*
 Loads image file form disk
