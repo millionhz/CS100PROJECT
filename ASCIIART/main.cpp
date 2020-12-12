@@ -18,7 +18,8 @@ void printUserInput(int argc, char* argv[]);
 string cleanImagePath(string image_file);
 void printHelp();
 void promptUserForInput(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
-bool extractInputFromArgs(char* argv[], string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
+//bool extractInputFromArgs(char* argv[], string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
+bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file);
 Mat readImage(string image_file);
 void resizeImage(Mat& image, int size, double y_shrink);
 void normalizeImage(Mat& image, const int& low, const int& high);
@@ -45,11 +46,30 @@ int main(int argc, char* argv[])
 
     if (argc == 7)
     {
-        bool success = extractInputFromArgs(argv, image_file, size, low, high, black_bg, text_file);
+        bool success = extractInputFromArgs(argv, 7, image_file, size, low, high, black_bg, text_file);
         if (!success)
         {
             return -1;
         }
+    }
+    else if (argc == 6)
+    {
+        bool success = extractInputFromArgs(argv, 6, image_file, size, low, high, black_bg, text_file);
+        if (!success)
+        {
+            return -1;
+        }
+        text_file = "";
+    }
+    else if (argc == 5)
+    {
+        bool success = extractInputFromArgs(argv, 5, image_file, size, low, high, black_bg, text_file);
+        if (!success)
+        {
+            return -1;
+        }
+        text_file = "";
+        black_bg = 1;
     }
     else if (argc == 1)
     {
@@ -97,9 +117,10 @@ int main(int argc, char* argv[])
 
     cout << ascii; // print ascii on console
 
-
-    saveAscii(ascii, text_file);
-
+    if (text_file != "")
+    {
+        saveAscii(ascii, text_file);
+    }
 
     if (prompt_used)
     {
@@ -152,11 +173,12 @@ Prints help onto the console
 */
 void printHelp()
 {
-    cout << "Usage: [image file path] [size] [low] [high] [black_bg] [text file path]" << endl << endl;
+    cout << "Usage: [image file path] [size] [low] [high] {[black_bg] [text file path]}" << endl << endl;
     cout << setw(20) << "image file path" << '\t' << "path to the image file you want to convert" << endl;
     cout << setw(20) << "size" << '\t' << "number of characters in a row of the converted image (higher == more detail)" << endl;
     cout << setw(20) << "low" << '\t' << "lower pixel value for normalization (0-255)" << endl;
     cout << setw(20) << "high" << '\t' << "higher pixel value for normalization (0-255)" << endl;
+    cout << "Optional:" << endl;
     cout << setw(20) << "black_bg" << '\t' << "whether to have the background of converted image be black or not (0-1)(0 == false; 1 == true)" << endl;
     cout << setw(20) << "text file path" << '\t' << "path to the text file where the converted image will be saved" << endl << endl;
     cout << "Example: ./myimage.jpg 110 40 240 1 art.txt" << endl;
@@ -238,32 +260,82 @@ bool convertAndAssign(int& variable, char* value)
 Extracts and validates inputs from argv
 @return: true if extraction successfull else false
 */
-bool extractInputFromArgs(char* argv[], string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file)
+bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file)
 {
-    /*
-    string:
-        - image_file
-        - text_file
-    int:
-        - size
-        - low
-        - high
-        - black_bg
-    */
-    if (convertAndAssign(size, argv[2]) && convertAndAssign(low, argv[3]) && convertAndAssign(high, argv[4]) && convertAndAssign(black_bg, argv[5]))
+    if (_argc > 1)
     {
-        if (size > 0 && low >= 0 && low < 255 && high > 0 && high <= 255 && black_bg >= 0 && black_bg <=1)
-        {
-            image_file = string(argv[1]);
-            text_file = string(argv[6]);
-            return true;
-        }
-        else
+        image_file = string(argv[1]);
+    }
+
+    if (_argc > 2)
+    {
+        if (!(convertAndAssign(size, argv[2]) && size > 0))
         {
             return false;
         }
     }
+
+    if (_argc > 3)
+    {
+        if (!(convertAndAssign(low, argv[3]) && low >= 0 && low <= 255))
+        {
+            return false;
+        }
+    }
+
+    if (_argc > 4)
+    {
+        if (!(convertAndAssign(high, argv[4]) && high >= 0 && high <= 255))
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+
+    if (_argc > 5)
+    {
+        if (!(convertAndAssign(black_bg, argv[5]) && black_bg >= 0 && black_bg <= 1))
+        {
+            return false;
+        }
+    }
+
+    if (_argc > 6)
+    {
+        text_file = string(argv[6]);
+    }
+
+    return true;
 }
+//bool extractInputFromArgs(char* argv[], string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file)
+//{
+//    /*
+//    string:
+//        - image_file
+//        - text_file
+//    int:
+//        - size
+//        - low
+//        - high
+//        - black_bg
+//    */
+//    if (convertAndAssign(size, argv[2]) && convertAndAssign(low, argv[3]) && convertAndAssign(high, argv[4]) && convertAndAssign(black_bg, argv[5]))
+//    {
+//        if (size > 0 && low >= 0 && low < 255 && high > 0 && high <= 255 && black_bg >= 0 && black_bg <=1)
+//        {
+//            image_file = string(argv[1]);
+//            text_file = string(argv[6]);
+//            return true;
+//        }
+//        else
+//        {
+//            return false;
+//        }
+//    }
+//}
 
 /*
 Loads image file form disk
