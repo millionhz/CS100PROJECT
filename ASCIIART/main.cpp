@@ -48,57 +48,6 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    //if (argc == 8)
-    //{
-    //    bool success = extractInputFromArgs(argv, 8, image_file, size, low, high, black_bg, text_file, y_shrink);
-    //    if (!success)
-    //    {
-    //        return -1;
-    //    }
-    //}
-    //else if (argc == 7)
-    //{
-    //    bool success = extractInputFromArgs(argv, 7, image_file, size, low, high, black_bg, text_file, y_shrink);
-    //    if (!success)
-    //    {
-    //        return -1;
-    //    }
-    //}
-    //else if (argc == 6)
-    //{
-    //    bool success = extractInputFromArgs(argv, 6, image_file, size, low, high, black_bg, text_file, y_shrink);
-    //    if (!success)
-    //    {
-    //        return -1;
-    //    }
-    //}
-    //else if (argc == 5)
-    //{
-    //    bool success = extractInputFromArgs(argv, 5, image_file, size, low, high, black_bg, text_file, y_shrink);
-    //    if (!success)
-    //    {
-    //        return -1;
-    //    }
-    //}
-    //else if (argc == 1)
-    //{
-    //    promptUserForInput(image_file, size, low, high, black_bg, text_file, y_shrink);
-    //}
-    //else if (argc == 2 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
-    //{
-    //    printHelp();
-    //    return 0;
-    //}
-    //else
-    //{
-    //    cout << "Parse Unsuccessful..." << endl;
-
-    //    printHelp();
-
-    //    printUserInput(argc, argv);
-    //    return -1;
-    //}
-
     if (!black_bg)
     {
         invertChars(chars, CHARS_SIZE);
