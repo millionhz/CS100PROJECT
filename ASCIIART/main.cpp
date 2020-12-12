@@ -263,7 +263,6 @@ bool extractInputFromArgs(char* argv[], string& image_file, int& size, int& low,
             return false;
         }
     }
-    return false;
 }
 
 /*
