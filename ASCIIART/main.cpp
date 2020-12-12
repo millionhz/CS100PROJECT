@@ -365,6 +365,7 @@ bool extractInputFromArgs(char* argv[], int argc, string& image_file, int& size,
 
 /*
 Manage inputs both from commandline and prompt
+(configure what number of args mean what to the program)
 @return: true if successful else false
 */
 bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink)
@@ -419,6 +420,7 @@ bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& lo
         printUserInput(argc, argv);
         return false;
     }
+    return true;
 }
 
 /*
