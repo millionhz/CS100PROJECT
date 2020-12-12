@@ -72,21 +72,6 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    //const parsing result = validateArgs(argc, argv);
-    //if (result == parsing::SUCCESS)
-    //{
-    //    extractInputsFromArgs(image_file, size, low, high, black_bg, text_file, argv);
-    //}
-    //else if (result == parsing::PROMPT)
-    //{
-    //    promptUserForInput(image_file, size, low, high, black_bg, text_file);
-    //    prompt_used = true;
-    //}
-    //else
-    //{
-    //    return 0;
-    //}
-
     if (!black_bg)
     {
         invertChars(chars, CHARS_SIZE);
@@ -280,54 +265,6 @@ bool extractInputFromArgs(string& image_file, int& size, int& low, int& high, in
     }
     return false;
 }
-
-/*
-Validates the input arguments from the user
-@param argc: size of input argument array
-@param argv: input argument array
-@return true if successful and false otherwise
-*/
-//parsing validateArgs(int argc, char* argv[])
-//{
-//    if (argc == 7 && atoi(argv[2]) > 0 && atoi(argv[3]) >= 0 && atoi(argv[3]) < 255 && atoi(argv[4]) > 0 && atoi(argv[4]) <= 255 && atoi(argv[5]) >= 0 && atoi(argv[5]) <= 1)
-//    {
-//        cout << "Parse Successful..." << endl;
-//        return parsing::SUCCESS;
-//    }
-//    else if (argc == 2 && ((string)argv[1] == "-h" || (string)argv[1] == "--help"))
-//    {
-//        printHelp();
-//        return parsing::FAIL;
-//    }
-//    else if (argc == 1)
-//    {
-//        return parsing::PROMPT;
-//    }
-//    else
-//    {
-//        cout << "Parse Unsuccessful..." << endl;
-//
-//        printHelp();
-//
-//        printUserInput(argc, argv);
-//        return parsing::FAIL;
-//    }
-//}
-
-/*
-Extract values from argv
-@param All necessary inputs
-@param argv: input argument array
-*/
-//void extractInputsFromArgs(string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, char* argv[])
-//{
-//    image_file = (string)argv[1];
-//    size = atoi(argv[2]);
-//    low = atoi(argv[3]);
-//    high = atoi(argv[4]);
-//    black_bg = (bool)atoi(argv[5]);
-//    text_file = (string)argv[6];
-//}
 
 /*
 Loads image file form disk
