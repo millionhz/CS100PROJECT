@@ -139,7 +139,7 @@ void printHelp()
     cout << "Optional:" << endl;
     cout << setw(20) << "black_bg" << '\t' << "whether to have the background of converted image be black or not (0-1)(0 == false; 1 == true)" << endl;
     cout << setw(20) << "text file path" << '\t' << "path to the text file where the converted image will be saved" << endl;
-    cout << setw(20) << "y_shrink" << '\t' << "vertical shrink of input image" << endl;
+    cout << setw(20) << "y_shrink" << '\t' << "vertical shrink of input image (recommended value: 1.956)" << endl;
     cout << "Example: ./myimage.jpg 110 40 240 1 art.txt" << endl;
 }
 
