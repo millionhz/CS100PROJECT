@@ -282,10 +282,6 @@ bool extractInputFromArgs(char* argv[], int argc, string& image_file, int& size,
             return false;
         }
     }
-    else
-    {
-        return false;
-    }
 
     if (argc > 5)
     {
@@ -320,21 +316,10 @@ Manage inputs both from commandline and prompt
 bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink)
 {
     bool success = false;
-    if (argc == 8)
+    //if (argc >= number of required args && argc <= total possible args)
+    if (argc >= 5 && argc <= 8)
     {
-        success = extractInputFromArgs(argv, 8, image_file, size, low, high, black_bg, text_file, y_shrink);
-    }
-    else if (argc == 7)
-    {
-        success = extractInputFromArgs(argv, 7, image_file, size, low, high, black_bg, text_file, y_shrink);
-    }
-    else if (argc == 6)
-    {
-        success = extractInputFromArgs(argv, 6, image_file, size, low, high, black_bg, text_file, y_shrink);
-    }
-    else if (argc == 5)
-    {
-        success = extractInputFromArgs(argv, 5, image_file, size, low, high, black_bg, text_file, y_shrink);
+        success = extractInputFromArgs(argv, argc, image_file, size, low, high, black_bg, text_file, y_shrink);
     }
     else if (argc == 1)
     {
@@ -344,7 +329,7 @@ bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& lo
     else if (argc == 2 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
     {
         printHelp();
-        success = false;
+        return false;
     }
     else
     {
