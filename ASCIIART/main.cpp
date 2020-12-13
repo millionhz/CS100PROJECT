@@ -206,7 +206,7 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, int&
 Convert and Assign a string value to an integer variable
 @param variable: variable to store the value to
 @param value: the string value that will be converted
-@return: true if conversion is successful
+@return true if conversion is successful
 */
 bool convertAndAssignInt(int& variable, char* value)
 {
@@ -229,7 +229,7 @@ bool convertAndAssignInt(int& variable, char* value)
 Convert and Assign a string value to an double variable
 @param variable: variable to store the value to
 @param value: the string value that will be converted
-@return: true if conversion is successful
+@return true if conversion is successful
 */
 bool convertAndAssignDouble(double& variable, char* value)
 {
@@ -250,7 +250,7 @@ bool convertAndAssignDouble(double& variable, char* value)
 
 /*
 Extracts and validates inputs from argv
-@return: true if extraction successful else false
+@return true if extraction successful else false
 */
 bool extractInputFromArgs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink)
 {
@@ -311,7 +311,7 @@ bool extractInputFromArgs(char* argv[], int argc, string& image_file, int& size,
 /*
 Manage inputs both from commandline and prompt
 (configure what number of args mean what to the program)
-@return: true if successful else false
+@return true if successful else false
 */
 bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink)
 {
