@@ -9,15 +9,16 @@ Make sure to add the `opencv_world450.dll` to the environment variables or put i
 
 ## Usage
 ```code
-Usage: [image file path] [size] [low] [high] [black_bg] [text file path]
+Usage: [image file path] [size] [low] [high] {[black_bg] [text file path] [y_shrink]}
 
      image file path    path to the image file you want to convert
                 size    number of characters in a row of the converted image (higher == more detail)
                  low    lower pixel value for normalization (0-255)
                 high    higher pixel value for normalization (0-255)
+Optional:
             black_bg    whether to have the background of converted image be black or not (0-1)(0 == false; 1 == true)
       text file path    path to the text file where the converted image will be saved
-
+            y_shrink    vertical shrink of input image
 Example: ./myimage.jpg 110 40 240 1 art.txt
 ```
 
