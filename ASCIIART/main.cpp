@@ -19,7 +19,7 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, int&
 bool convertAndAssignInt(int& variable, char* value);
 bool convertAndAssignDouble(double& variable, char* value);
 bool extractInputFromArgs(char* argv[], int _argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink);
-bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink);
+bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink, bool& prompt_used);
 Mat readImage(string image_file);
 void resizeImage(Mat& image, int size, double y_shrink);
 void normalizeImage(Mat& image, const int& low, const int& high);
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     bool prompt_used = false;
     string ascii = "";
 
-    if (!manageInputs(argv, argc, image_file, size, low, high, black_bg, text_file, y_shrink))
+    if (!manageInputs(argv, argc, image_file, size, low, high, black_bg, text_file, y_shrink, prompt_used))
     {
         return -1;
     }
@@ -196,7 +196,7 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, int&
         {
             exit(-1);
         }
-        cout << "Value for vertical shrinking: "; cin >> y_shrink;
+        cout << "Value for vertical shrinking (recommended value: 1.956): "; cin >> y_shrink;
     } while (y_shrink < 0);
 
 }
@@ -303,7 +303,6 @@ bool extractInputFromArgs(char* argv[], int argc, string& image_file, int& size,
             return false;
         }
     }
-
     return true;
 }
 
@@ -313,7 +312,7 @@ Manage inputs both from commandline and prompt
 (configure what number of args mean what to the program)
 @return true if successful else false
 */
-bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink)
+bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& low, int& high, int& black_bg, string& text_file, double& y_shrink, bool& prompt_used)
 {
     bool success = false;
     //if (argc >= number of required args && argc <= total possible args)
@@ -324,6 +323,7 @@ bool manageInputs(char* argv[], int argc, string& image_file, int& size, int& lo
     else if (argc == 1)
     {
         promptUserForInput(image_file, size, low, high, black_bg, text_file, y_shrink);
+        prompt_used = true;
         success = true;
     }
     else if (argc == 2 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
@@ -363,7 +363,6 @@ Mat readImage(string image_file)
     return image;
 }
 
-/*
 /*
 Resizes the image while maintaining aspect ratio
 @param image: cv2 image array
@@ -451,6 +450,8 @@ void saveAscii(const string& ascii, const string& text_file)
     ofstream out_file;
     out_file.open(text_file);
     out_file << ascii;
+    out_file.close();
+
 }
 
 /*
