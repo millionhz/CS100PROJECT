@@ -167,7 +167,7 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, int&
             exit(-1);
         }
         cout << "Input lower value for normalization (0-255): "; cin >> low;
-    } while (low < 1 && low > 255);
+    } while (low < 1 || low > 255);
 
     do
     {
@@ -176,7 +176,7 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, int&
             exit(-1);
         }
         cout << "Input upper value for normalization (0-255): "; cin >> high;
-    } while (high < 1 && high > 255);
+    } while (high < 1 || high > 255);
 
     do
     {
@@ -185,7 +185,7 @@ void promptUserForInput(string& image_file, int& size, int& low, int& high, int&
             exit(-1);
         }
         cout << "Produce image with black background config (0 = no | 1 = yes): "; cin >> black_bg;
-    } while (black_bg < 0 && black_bg > 1);
+    } while (black_bg < 0 || black_bg > 1);
 
     cin.ignore(1000, '\n');
     cout << "Input text file path for output: "; getline(cin, text_file); text_file = cleanImagePath(text_file);
